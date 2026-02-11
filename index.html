@@ -5,5 +5,110 @@
 </head>
 <body>
     <h1>Привет! Мой сайт работает на HTTPS!</h1>
+
+    <div id="app"></div>
+    <script>
+        
+
+   function createWindowInfoViewer() {
+       const app = document.querySelector('#app');
+       app.innerHTML = ''; // Очищаем содержимое
+
+       const container = document.createElement('div');
+       container.style.fontFamily = 'monospace';
+       container.style.padding = '20px';
+       container.style.backgroundColor = '#f5f5f5';
+       container.style.maxHeight = '80vh';
+       container.style.overflow = 'auto';
+       container.style.border = '1px solid #ddd';
+
+       const title = document.createElement('h2');
+       title.textContent = 'Window Object Properties';
+       container.appendChild(title);
+
+       // Создаем дерево свойств
+       function createPropertyTree(obj, parentKey = 'window') {
+           const ul = document.createElement('ul');
+           ul.style.listStyle = 'none';
+           ul.style.paddingLeft = '20px';
+           ul.style.margin = '5px 0';
+
+           // Получаем только собственные свойства
+           const keys = Object.getOwnPropertyNames(obj).sort();
+
+           keys.forEach(key => {
+               try {
+                   const li = document.createElement('li');
+                   li.style.margin = '3px 0';
+
+                   const value = obj[key];
+                   const type = typeof value;
+
+                   // Создаем элемент для ключа
+                   const keySpan = document.createElement('span');
+                   keySpan.textContent = key;
+                   keySpan.style.color = '#0366d6';
+                   keySpan.style.fontWeight = 'bold';
+
+                   li.appendChild(keySpan);
+
+                   // Добавляем разделитель
+                   li.appendChild(document.createTextNode(': '));
+
+                   // Форматируем значение в зависимости от типа
+                   const valueSpan = document.createElement('span');
+
+                   if (value === null) {
+                       valueSpan.textContent = 'null';
+                       valueSpan.style.color = '#d73a49';
+                   } else if (value === undefined) {
+                       valueSpan.textContent = 'undefined';
+                       valueSpan.style.color = '#6a737d';
+                   } else if (type === 'function') {
+                       valueSpan.textContent = `function ${value.name || 'anonymous'}()`;
+                       valueSpan.style.color = '#6f42c1';
+                   } else if (type === 'string') {
+                       valueSpan.textContent = `"${value.length > 50 ? value.substring(0, 50) + '...' : value}"`;
+                       valueSpan.style.color = '#032f62';
+                   } else if (type === 'number') {
+                       valueSpan.textContent = value.toString();
+                       valueSpan.style.color = '#005cc5';
+                   } else if (type === 'boolean') {
+                       valueSpan.textContent = value.toString();
+                       valueSpan.style.color = '#e36209';
+                   } else if (Array.isArray(value)) {
+                       valueSpan.textContent = `Array(${value.length})`;
+                       valueSpan.style.color = '#22863a';
+                   } else if (value instanceof Element) {
+                       valueSpan.textContent = `HTML${value.tagName}Element`;
+                       valueSpan.style.color = '#735c0f';
+                   } else if (type === 'object') {
+                       valueSpan.textContent = `Object {${Object.keys(value).length} properties}`;
+                       valueSpan.style.color = '#005cc5';
+                   } else {
+                       valueSpan.textContent = String(value);
+                       valueSpan.style.color = '#24292e';
+                   }
+
+                   li.appendChild(valueSpan);
+                   ul.appendChild(li);
+               } catch (e) {
+                   // Пропускаем недоступные свойства
+               }
+           });
+
+           return ul;
+       }
+
+       container.appendChild(createPropertyTree(window));
+       app.appendChild(container);
+   }
+
+   // Запускаем просмотрщик
+   setTimeout(() => {
+       createWindowInfoViewer();
+   }, 1000)
+
+    </script>
 </body>
 </html>
